@@ -36,8 +36,12 @@ function initializeNillion() {
       });
 
       await builderInstance.refreshRootToken();
+
+      const profile = await builderInstance.readProfile();
       
       console.log("✅ Nillion SDK initialized successfully");
+
+      console.log("Builder profile", profile);
       
     } catch (error) {
       console.error("❌ Failed to initialize Nillion SDK:", error);
