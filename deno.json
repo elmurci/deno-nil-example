@@ -5,15 +5,17 @@
     "strict": true
   },
   "tasks": {
-    "start": "deno run --allow-net --allow-env main.ts"
+    "start": "deno run --allow-net --allow-env main.ts",
+    "dev": "deno run --allow-net --allow-env --watch main.ts"
   },
   "imports": {
     "@nillion/nuc": "npm:@nillion/nuc@0.1.1",
     "@nillion/secretvaults": "npm:@nillion/secretvaults@0.1.5"
   },
   "nodeModulesDir": false,
-  "permissions": {
-    "net": "inherit",
-    "env": "inherit"
+  "deploy": {
+    "project": "your-project-name",
+    "entrypoint": "main.ts",
+    "exclude": ["*.md", "tests/"]
   }
 }
