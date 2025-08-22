@@ -61,7 +61,7 @@ async function handleRequest(request: Request): Promise<Response> {
           <html>
             <body>
               <h1>Nillion SDK Test</h1>
-              <p>Builder: ${builderInstance}</p>
+              <p>Builder: ${builderInstance.did}</p>
             </body>
           </html>
         `, {
