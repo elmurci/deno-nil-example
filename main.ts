@@ -1,11 +1,10 @@
-import { Keypair, NucTokenBuilder, Command } from 'npm:@nillion/nuc@0.1.1';
+import { Keypair } from 'npm:@nillion/nuc@0.1.1';
 import { SecretVaultBuilderClient } from 'npm:@nillion/secretvaults@0.1.5';
 
-// Global variables to cache the builder instance
 let builderInstance: any = null;
 let initializationPromise: Promise<void> | null = null;
 
-async function initializeNillion() {
+function initializeNillion() {
   if (initializationPromise) {
     return initializationPromise;
   }
@@ -17,7 +16,7 @@ async function initializeNillion() {
       const NIL_BUILDER_PRIVATE_KEY = Deno.env.get("NIL_BUILDER_PRIVATE_KEY") || 
         "1ce2a82a51bfedb409cb42efff3b4b029e885ac3bdfda4dbb2e12d86c024c163";
 
-      const builderKeypair = Keypair.from(NIL_BUILDER_PRIVATE_KEY);
+      const builderKeypair = Keypair.from(NIL_BUILDER_PRIVATE_KEY!);
       
       builderInstance = await SecretVaultBuilderClient.from({
         keypair: builderKeypair,
@@ -90,39 +89,6 @@ async function handleRequest(request: Request): Promise<Response> {
           message: "Nillion SDK initialized",
           did: builderInstance?.did?.toString()
         });
-
-      case "/profile":
-        if (!builderInstance) {
-          await initializeNillion();
-        }
-        
-        const profile = await builderInstance.readProfile();
-        return Response.json({ 
-          profile,
-          did: builderInstance.did.toString()
-        });
-
-      case "/token":
-        if (!builderInstance) {
-          await initializeNillion();
-        }
-
-        const NIL_BUILDER_PRIVATE_KEY = Deno.env.get("NIL_BUILDER_PRIVATE_KEY") || 
-          "1ce2a82a51bfedb409cb42efff3b4b029e885ac3bdfda4dbb2e12d86c024c163";
-        const builderKeypair = Keypair.from(NIL_BUILDER_PRIVATE_KEY);
-
-        const token = NucTokenBuilder.extending(builderInstance.rootToken)
-          .command(new Command(['nil', 'db', 'data', 'create']))
-          .audience(builderInstance.did)
-          .expiresAt(Math.floor(Date.now() / 1000) + 3600)
-          .build(builderKeypair.privateKey());
-
-        return Response.json({ 
-          token,
-          expiresAt: Math.floor(Date.now() / 1000) + 3600,
-          did: builderInstance.did.toString()
-        });
-
       default:
         return new Response("Not Found", { status: 404 });
     }
@@ -139,10 +105,6 @@ async function handleRequest(request: Request): Promise<Response> {
   }
 }
 
-// This is the key part - Deno Deploy needs this export
 export default {
   fetch: handleRequest,
 };
-
-// Alternative export style (try this if the above doesn't work)
-// export { handleRequest as fetch };
