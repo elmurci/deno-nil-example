@@ -60,8 +60,8 @@ async function handleRequest(request: Request): Promise<Response> {
         return new Response(`
           <html>
             <body>
-              <h1>🎯 Nillion SDK Test</h1>
-              <p>Builder: ${builderInstance.rootTooken}</p>
+              <h1>Nillion SDK Test</h1>
+              <p>Builder: ${builderInstance}</p>
             </body>
           </html>
         `, {
