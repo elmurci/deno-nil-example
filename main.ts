@@ -4,7 +4,7 @@ import { SecretVaultBuilderClient } from 'npm:@nillion/secretvaults@0.1.5';
 let builderInstance: any = null;
 let initializationPromise: Promise<void> | null = null;
 
-function initializeNillion() {
+const initializeNillion = () => {
   if (initializationPromise) {
     return initializationPromise;
   }
@@ -36,12 +36,8 @@ function initializeNillion() {
       });
 
       await builderInstance.refreshRootToken();
-
-      const profile = await builderInstance.readProfile();
       
       console.log("✅ Nillion SDK initialized successfully");
-
-      console.log("Builder profile", profile);
       
     } catch (error) {
       console.error("❌ Failed to initialize Nillion SDK:", error);
@@ -56,6 +52,9 @@ async function handleRequest(request: Request): Promise<Response> {
   const url = new URL(request.url);
   
   try {
+
+    await initializeNillion();
+
     switch (url.pathname) {
       case "/":
         return new Response(`
