@@ -36,6 +36,7 @@ function initializeNillion() {
       });
 
       await builderInstance.refreshRootToken();
+      
       console.log("✅ Nillion SDK initialized successfully");
       
     } catch (error) {
@@ -51,44 +52,19 @@ async function handleRequest(request: Request): Promise<Response> {
   const url = new URL(request.url);
   
   try {
-    // Handle different endpoints
     switch (url.pathname) {
       case "/":
         return new Response(`
           <html>
             <body>
-              <h1>🎯 Nillion SDK Service</h1>
-              <p>Available endpoints:</p>
-              <ul>
-                <li><a href="/health">GET /health</a> - Health check</li>
-                <li><a href="/profile">GET /profile</a> - Get profile</li>
-                <li><a href="/token">GET /token</a> - Generate token</li>
-                <li><a href="/initialize">POST /initialize</a> - Initialize SDK</li>
-              </ul>
+              <h1>🎯 Nillion SDK Test</h1>
+              <p>Builder: ${builderInstance.rootTooken}</p>
             </body>
           </html>
         `, {
           headers: { "content-type": "text/html" }
         });
 
-      case "/health":
-        return Response.json({ 
-          status: "healthy", 
-          timestamp: new Date().toISOString(),
-          initialized: builderInstance !== null
-        });
-
-      case "/initialize":
-        if (request.method !== "POST") {
-          return new Response("Method not allowed", { status: 405 });
-        }
-        
-        await initializeNillion();
-        return Response.json({ 
-          success: true, 
-          message: "Nillion SDK initialized",
-          did: builderInstance?.did?.toString()
-        });
       default:
         return new Response("Not Found", { status: 404 });
     }
